@@ -27,7 +27,7 @@ jobs:
       - name: Deploy Application
         run: |
           echo "Deploying application..."
-          cd /home/ubuntu/fastapi-book_project
+          cd /home/ubuntu/fastapi-book-project
           git pull origin main
           source venv/bin/activate
           pip install -r requirements.txt
