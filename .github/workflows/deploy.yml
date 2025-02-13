@@ -1,4 +1,5 @@
-name: CD
+name: CD Pipeline
+
 on:
   push:
     branches:
@@ -7,17 +8,29 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /home/ubuntu/fastapi-book_project
-            git pull origin main
-            source venv/bin/activate
-            pip install -r requirements.txt
-            sudo systemctl restart fastapi
-            sudo systemctl restart nginx
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
+          cd /home/ubuntu/fastapi-book_project
+          git pull origin main
+          source venv/bin/activate
+          pip install -r requirements.txt
+          sudo systemctl restart fastapi
+          sudo systemctl restart nginx
+
